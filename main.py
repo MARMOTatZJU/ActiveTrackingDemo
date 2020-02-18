@@ -19,21 +19,25 @@ from _utils.bbox import calc_IoU
 # video_names = ["handball1", "ball1", "basketball", "tiger"]
 
 import sys
-sys.path.append("/home/lan/Documents/xuyinda/Projects/video_analyst/debug")
-from import_dataset import dataset, vot_benchmark
-from import_tracker import tracker, xywh2xyxy
+# sys.path.append("/home/lan/Documents/xuyinda/Projects/video_analyst/debug")
+# from import_dataset import dataset, vot_benchmark
+# from import_tracker import tracker, xywh2xyxy
+from import_videoanalyst import dataset, vot_benchmark
+from import_videoanalyst import tracker, xywh2xyxy
 
-sys.path.append("/home/lan/Documents/xuyinda/Projects/CenterNet/debug")
-from import_pose_detector import pose_detector, Debugger
+# sys.path.append("/home/lan/Documents/xuyinda/Projects/CenterNet/debug")
+# from import_pose_detector import pose_detector, Debugger
+from import_centernet import pose_detector, Debugger
 
-sys.path.append("/home/lan/Documents/xuyinda/Projects/CenterNet/src/lib/models/networks/DCNv2")
+# sys.path.append("/home/lan/Documents/xuyinda/Projects/CenterNet/src/lib/models/networks/DCNv2")
 
-video_names = ["frisbee", "book", "ball1"]
-video_names = ["glove"]
+# video_names = ["frisbee", "book", "ball1"]
+# video_names = ["glove"]
+video_names = ["frisbee"]
 for video_name in video_names:
     print("Run %s"%video_name)
     video_file = "./%s.avi"%video_name
-    video_writer = VideoWriter(video_file, fps=20)
+    video_writer = VideoWriter(video_file, fps=20, scale=0.6)
 
     video = dataset[video_name]
     image_files, gt = video['image_files'], video['gt']
@@ -85,7 +89,8 @@ for video_name in video_names:
             holder_id = person_ids[max(range(len(person_ids)), key=lambda idx: person_target_ious[idx])]
         # draw object target_bbox
         target_bbox = tuple(map(int, target_bbox))
-        cv2.rectangle(debugger.imgs["multi_pose"], target_bbox[:2], target_bbox[2:], (0, 255, 255))
+        color = (0, 255, 255) if (holder_id != -1) else (0, 127, 255)
+        cv2.rectangle(debugger.imgs["multi_pose"], target_bbox[:2], target_bbox[2:], color)
 
         # draw interaction status
         txt = "holder_id %d"%holder_id
@@ -93,7 +98,7 @@ for video_name in video_names:
         cat_size = cv2.getTextSize(txt, font, 0.5, 2)[0]
         cv2.rectangle(debugger.imgs["multi_pose"],
             (target_bbox[0], target_bbox[1] - cat_size[1] - 2),
-            (target_bbox[0] + cat_size[0], target_bbox[1] - 2), (0, 255, 255), -1)
+            (target_bbox[0] + cat_size[0], target_bbox[1] - 2), color, -1)
         cv2.putText(debugger.imgs["multi_pose"], txt, (target_bbox[0], target_bbox[1] - 2), 
                     font, 0.5, (0, 0, 0), thickness=1, lineType=cv2.LINE_AA)
 

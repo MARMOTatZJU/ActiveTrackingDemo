@@ -3,13 +3,17 @@
 import os.path as osp
 import sys  # isort:skip
 
-module_name = "debug"
-p = __file__
-while osp.basename(p) != module_name:
-    p = osp.dirname(p)
+# module_name = "debug"
+# p = __file__
+# while osp.basename(p) != module_name:
+#     p = osp.dirname(p)
+p = osp.dirname(osp.realpath(__file__))
+p = osp.dirname(p)
+p = osp.dirname(p)
+p = osp.join(p, "CenterNet")
 
-ROOT_PATH = osp.dirname(p)
-ROOT_CFG = osp.join(ROOT_PATH, 'config.yaml')
+ROOT_PATH = p
+# i = osp.join(ROOT_PATH, 'config.yaml')
 # sys.path.insert(0, ROOT_PATH)  # isort:skip
 SRC_PATH = osp.join(ROOT_PATH, "src")
 LIB_PATH = osp.join(ROOT_PATH, "src/lib")
@@ -32,8 +36,10 @@ image_ext = ['jpg', 'jpeg', 'png', 'webp']
 video_ext = ['mp4', 'mov', 'avi', 'mkv']
 time_stats = ['tot', 'load', 'pre', 'net', 'dec', 'post', 'merge']
 
+MODEL_DIR = osp.join(ROOT_PATH, "models/multi_pose_dla_3x.pth")
+
 opt = opts().init(["multi_pose", 
-                   "--load_model", "/home/lan/Documents/xuyinda/Projects/CenterNet/models/multi_pose_dla_3x.pth", 
+                   "--load_model", MODEL_DIR, 
                    "--debug", "0"
                    ]) 
 
