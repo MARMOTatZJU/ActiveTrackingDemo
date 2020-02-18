@@ -1,0 +1,12 @@
+__pycache__/
+*.avi
+*.swp
+*.swo
+*.pyc
+*.png
+*.jpg
+*.pkl
+*.o
+.idea/
+
+/debug
