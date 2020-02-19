@@ -9,8 +9,7 @@ import sys  # isort:skip
 #     p = osp.dirname(p)
 p = osp.dirname(osp.realpath(__file__))
 p = osp.dirname(p)
-p = osp.dirname(p)
-p = osp.join(p, "video_analyst")
+p = osp.join(p, "3rdparty", "video_analyst")
 
 ROOT_PATH = p
 # ROOT_CFG = osp.join(ROOT_PATH, 'config.yaml')
