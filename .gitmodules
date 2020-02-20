@@ -1,6 +1,6 @@
 [submodule "3rdparty/video_analyst"]
-	path = 3rdparty/video_analyst
+	path = third_party/video_analyst
 	url = https://github.com/MARMOTatZJU/video_analyst.git
 [submodule "3rdparty/CenterNet"]
-	path = 3rdparty/CenterNet
+	path = third_party/CenterNet
 	url = https://github.com/MARMOTatZJU/CenterNet.git
