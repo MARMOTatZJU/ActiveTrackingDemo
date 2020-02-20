@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 echo "Running in Environment with CUDA."
-pushd 3rdparty
+pushd third_party
   # compile in video_analyst
   pushd video_analyst
   bash compile.sh

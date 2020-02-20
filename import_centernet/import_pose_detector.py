@@ -9,7 +9,7 @@ import sys  # isort:skip
 #     p = osp.dirname(p)
 p = osp.dirname(osp.realpath(__file__))
 p = osp.dirname(p)
-p = osp.join(p, "3rdparty", "CenterNet")
+p = osp.join(p, "third_party", "CenterNet")
 
 ROOT_PATH = p
 # i = osp.join(ROOT_PATH, 'config.yaml')
