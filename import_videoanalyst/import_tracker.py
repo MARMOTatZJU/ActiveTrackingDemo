@@ -33,9 +33,9 @@ import torch
 logger = logging.getLogger('global')
 
 # exp_cfg_path = osp.realpath("/home/lan/Documents/xuyinda/Projects/video_analyst/experiments/siamfcpp/test/siamfcpp_googlenet.yaml")
-exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_googlenet-new.yaml")
+# exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_googlenet-new.yaml")
 # exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_googlenet-multi_temp.yaml")
-# exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_alexnet-new.yaml")
+exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_alexnet-new.yaml")
 # exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_tinyconv.yaml")
 root_cfg.merge_from_file(exp_cfg_path)
 logger.info("Load experiment config. at: %s" % exp_cfg_path)

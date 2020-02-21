@@ -29,6 +29,7 @@ from import_videoanalyst import tracker, xywh2xyxy
 # from import_pose_detector import pose_detector, Debugger
 from import_centernet import pose_detector, Debugger
 
+imresize_ratio = 1
 # sys.path.append("/home/lan/Documents/xuyinda/Projects/CenterNet/src/lib/models/networks/DCNv2")
 
 # video_names = ["frisbee", "book", "ball1"]
@@ -46,8 +47,10 @@ for video_name in video_names:
     # inittialize tracker
     image_file = image_files[0]
     im = vot_benchmark.get_img(image_file)
+    im = cv2.resize(im, (0, 0), fx=imresize_ratio, fy=imresize_ratio)
     cx, cy, w, h = vot_benchmark.get_axis_aligned_bbox(gt[0])
     rect = vot_benchmark.cxy_wh_2_rect((cx, cy), (w, h))
+    rect = rect*imresize_ratio
 
     tracker.init(im, rect)
     person_tracker = IOUTracker()
@@ -57,6 +60,7 @@ for video_name in video_names:
         # fetch frame image
         image_file = image_files[idx]
         im = vot_benchmark.get_img(image_file)
+        im = cv2.resize(im, (0, 0), fx=imresize_ratio, fy=imresize_ratio)
         # run pose detector
         tick_start = cv2.getTickCount()
         ret = pose_detector.run(im)

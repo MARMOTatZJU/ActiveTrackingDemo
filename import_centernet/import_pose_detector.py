@@ -39,7 +39,12 @@ MODEL_DIR = osp.join(ROOT_PATH, "models/multi_pose_dla_3x.pth")
 
 opt = opts().init(["multi_pose", 
                    "--load_model", MODEL_DIR, 
-                   "--debug", "0"
+                   "--debug", "0",
+                #    "--input_res", "256",
+                   "--input_h", "256",
+                   "--input_w", "512",
+                #    "--keep_res",
+                #    "--not_reg_hp_offset",
                    ]) 
 
 os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpus_str
