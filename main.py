@@ -56,9 +56,9 @@ for video_name in video_names:
     person_tracker = IOUTracker()
     
     elapsed_time = 0
-    for idx in tqdm(range(1, len_video)):
+    for frame_idx in tqdm(range(1, len_video)):
         # fetch frame image
-        image_file = image_files[idx]
+        image_file = image_files[frame_idx]
         im = vot_benchmark.get_img(image_file)
         im = cv2.resize(im, (0, 0), fx=imresize_ratio, fy=imresize_ratio)
         # run pose detector
@@ -81,6 +81,7 @@ for video_name in video_names:
             debugger.add_coco_bbox(bbox[:4], 0, bbox[4], img_id='multi_pose', prompt=prompt)
             debugger.add_coco_hp(bbox[5:39], img_id='multi_pose')
 
+
         # run tracker
         tick_start = cv2.getTickCount()
         rect = tracker.update(im)
@@ -90,6 +91,7 @@ for video_name in video_names:
         if (len(person_target_ious)==0) or (max(person_target_ious) <= 0):
             holder_id = -1
         else:
+            # argmax_{person_target_ious} person_ids
             holder_id = person_ids[max(range(len(person_ids)), key=lambda idx: person_target_ious[idx])]
         # draw object target_bbox
         target_bbox = tuple(map(int, target_bbox))
@@ -109,6 +111,15 @@ for video_name in video_names:
         # visualize
         im_preview = debugger.imgs["multi_pose"]
         video_writer.write(im_preview)
+
+        # DEBUG
+        # dump_freq = 50
+        # if frame_idx % dump_freq == 0:
+        #     p_dump = "./tmp/%d.jpg"%frame_idx
+        #     cv2.imwrite(p_dump, im_preview)
+        #     print(p_dump)
+        # DEBUG
+
         # cv2.imshow("preview", im_preview)
         # cv2.waitKey(0)
         # from IPython import embed;embed()
