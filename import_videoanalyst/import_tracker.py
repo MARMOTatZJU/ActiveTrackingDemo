@@ -32,12 +32,11 @@ import torch
 
 logger = logging.getLogger('global')
 
-# exp_cfg_path = osp.realpath("/home/lan/Documents/xuyinda/Projects/video_analyst/experiments/siamfcpp/test/siamfcpp_googlenet.yaml")
 exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_googlenet-new.yaml")
-# exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_googlenet-multi_temp.yaml")
 # exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_alexnet-new.yaml")
 # exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_alexnet.yaml")
-# exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/vot/siamfcpp_tinyconv.yaml")
+# exp_cfg_path = osp.join(ROOT_PATH, "experiments/siamfcpp/test/got10k/siamfcpp_shufflenetv2x1_0-got.yaml")
+
 root_cfg.merge_from_file(exp_cfg_path)
 logger.info("Load experiment config. at: %s" % exp_cfg_path)
 
@@ -52,7 +51,7 @@ model = model_builder.build(task, task_cfg.model)
 # build pipeline
 # pipeline = pipeline_builder.build_pipeline('track', task_cfg.pipeline)
 # pipeline.set_model(model)
-pipeline = pipeline_builder.build_pipeline(task, task_cfg.pipeline, model)
+pipeline = pipeline_builder.build(task, task_cfg.pipeline, model)
 dev = torch.device("cuda:0")
 pipeline.to_device(dev)
 
