@@ -5,6 +5,8 @@ from tqdm import tqdm
 import cv2
 from _utils.video_writer import VideoWriter
 from _utils.iou_tracker import IOUTracker
+# from _utils.relationship_detector import RelationshipDetector
+from _utils.fast_relationship_detector import FastRelationshipDetector
 from _utils.bbox import calc_IoU
 
 # dataset = import_module("dataset", "/home/lan/Documents/xuyinda/Projects/video_analyst/debug/import_tracker.py")
@@ -30,6 +32,7 @@ from import_videoanalyst import tracker, xywh2xyxy
 from import_centernet import pose_detector, Debugger
 
 imresize_ratio = 1
+video_writer_scale = 0.4
 # sys.path.append("/home/lan/Documents/xuyinda/Projects/CenterNet/src/lib/models/networks/DCNv2")
 
 # video_names = ["frisbee", "book", "ball1"]
@@ -38,7 +41,7 @@ video_names = ["frisbee"]
 for video_name in video_names:
     print("Run %s"%video_name)
     video_file = "./%s.avi"%video_name
-    video_writer = VideoWriter(video_file, fps=20, scale=0.6)
+    video_writer = VideoWriter(video_file, fps=20, scale=video_writer_scale)
 
     video = dataset[video_name]
     image_files, gt = video['image_files'], video['gt']
@@ -54,6 +57,7 @@ for video_name in video_names:
 
     tracker.init(im, rect)
     person_tracker = IOUTracker()
+    rel_detector = FastRelationshipDetector()
     
     elapsed_time = 0
     for frame_idx in tqdm(range(1, len_video)):
@@ -71,6 +75,7 @@ for video_name in video_names:
         # IoU tracker track person id
         person_ids = person_tracker([bbox[:5] for bbox in results[1]])
         # from IPython import embed;embed()
+
         # draw keypoints
         debugger = Debugger(dataset=pose_detector.opt.dataset, ipynb=(pose_detector.opt.debug==3),
                             theme=pose_detector.opt.debugger_theme)
@@ -87,12 +92,22 @@ for video_name in video_names:
         rect = tracker.update(im)
         elapsed_time += (cv2.getTickCount() - tick_start) / cv2.getTickFrequency()
         target_bbox = xywh2xyxy(rect)
-        person_target_ious = [calc_IoU(target_bbox, bbox[:4]) for bbox in results[1]]
-        if (len(person_target_ious)==0) or (max(person_target_ious) <= 0):
-            holder_id = -1
-        else:
-            # argmax_{person_target_ious} person_ids
-            holder_id = person_ids[max(range(len(person_ids)), key=lambda idx: person_target_ious[idx])]
+
+ 
+        # inference for holder
+        holder_id, relation_type = rel_detector(target_bbox, results[1], person_ids)
+        # from IPython import embed;embed()
+        # print(holder_id)
+ 
+        # inference for holder
+        # person_target_ious = [calc_IoU(target_bbox, bbox[:4]) for bbox in results[1]]
+        # if (len(person_target_ious)==0) or (max(person_target_ious) <= 0):
+        #     holder_id = -1
+        # else:
+        #     # argmax_{person_target_ious} person_ids
+        #     holder_id = person_ids[max(range(len(person_ids)), key=lambda idx: person_target_ious[idx])]
+
+
         # draw object target_bbox
         target_bbox = tuple(map(int, target_bbox))
         color = (0, 255, 255) if (holder_id != -1) else (0, 127, 255)
@@ -113,11 +128,11 @@ for video_name in video_names:
         video_writer.write(im_preview)
 
         # DEBUG
-        # dump_freq = 50
-        # if frame_idx % dump_freq == 0:
-        #     p_dump = "./tmp/%d.jpg"%frame_idx
-        #     cv2.imwrite(p_dump, im_preview)
-        #     print(p_dump)
+        dump_freq = 10
+        if frame_idx % dump_freq == 0:
+            p_dump = "./tmp/%d.jpg"%frame_idx
+            cv2.imwrite(p_dump, im_preview)
+            print(p_dump)
         # DEBUG
 
         # cv2.imshow("preview", im_preview)

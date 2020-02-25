@@ -81,6 +81,30 @@ def calc_IoU(bbox1, bbox2):
 
     return iou
 
+def calc_centerness(center, bbox):
+    """
+    Calculate center-ness defined in: https://arxiv.org/abs/1904.01355
+        sqrt( min(l, r) / max(l, r) * min(t, b) / max(t, b) )
+    :param center: (B, 2), (x, y)
+    :param bbox: (B, 4), (x1, y1, x2, y2)
+    :return:
+        center-ness(B, )
+    """
+    center = np.array(center).reshape(-1, 2)
+    bbox = np.array(bbox).reshape(-1, 4)
+    l = np.maximum(center[:, 0] - bbox[:, 0], 0)
+    r = np.maximum(bbox[:, 2] - center[:, 0], 0)
+    t = np.maximum(center[:, 1] - bbox[:, 1], 0)
+    b = np.maximum(bbox[:, 3] - center[:, 1], 0)
+    centerness = np.sqrt(np.minimum(l, r) / np.maximum(l, r) *
+                         np.minimum(t, b) / np.maximum(t, b))
+
+    return centerness
+
+def is_pt_inside_bbox(pt, bbox):
+    x1, y1, x2, y2 = bbox
+    flag = (pt[0] >= x1) and (pt[0] <= x2) and (pt[1] >= y1) and (pt[1] <= y2)
+    return flag
 
 # ============================== Formal conversion ============================== #
 

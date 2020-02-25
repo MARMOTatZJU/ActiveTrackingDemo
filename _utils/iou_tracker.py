@@ -1,3 +1,5 @@
+from typing import List
+
 from .bbox import calc_IoU
 
 class IOUTracker(object):
@@ -8,7 +10,20 @@ class IOUTracker(object):
         self.iou_thres = iou_thres
         self.score_thres = score_thres
     
-    def __call__(self, det_bboxes, ):
+    def __call__(self, det_bboxes, ) -> List[int]:
+        r"""Perform one frame of tracking
+        
+        Parameters
+        ----------
+        det_bboxes : [type]
+            [description]
+        
+        Returns
+        -------
+        List[int]
+            Person IDs assinged to each detection result
+            Same length as det_bboxes  
+        """
         det_idxs = list(range(len(det_bboxes)))
         target_ids = [-1 for _ in range(len(det_bboxes))]
 
