@@ -11,7 +11,7 @@ _RELATIONSHIP_CLASSES = ["possessing by hand", "possessing by foot",
 
 class FastRelationshipDetector(object):
     _MAX_CNT = 5
-    _TARGET_BBOX_EXPANSION_RATIO = 1.6
+    _TARGET_BBOX_EXPANSION_RATIO = 1.5
 
     def __init__(self,):
         self.relationship_histories = OrderedDict()
@@ -85,6 +85,19 @@ class FastRelationshipDetector(object):
     def _expand_bbox(self, target_bbox):
         target_bbox = np.array(target_bbox).reshape(4)
         target_bbox = xyxy2cxywh(target_bbox)
+        
+        # modif
         target_bbox[2:] *= self._TARGET_BBOX_EXPANSION_RATIO
+        s = self._get_crop_size(target_bbox[2], target_bbox[3])
+        # s *= = self._TARGET_BBOX_EXPANSION_RATIO
+        target_bbox[2] = s
+        target_bbox[3] = s
+
         target_bbox = cxywh2xyxy(target_bbox)
         return target_bbox
+    
+    def _get_crop_size(self, w, h):
+        w_  = w + (w+h) / 2
+        h_  = h + (w+h) / 2        
+        s = np.sqrt( w_ * h_ )
+        return s

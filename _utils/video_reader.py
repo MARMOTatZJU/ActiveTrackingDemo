@@ -18,8 +18,11 @@ class VideoReader(object):
         self.img_paths = sorted(self.img_paths)
 
         anno_path = osp.join(self.video_dir, "annotation.json")
-        with open(anno_path, "r") as f:
-            self.anno = json.load(f)
+        if osp.exists(anno_path):
+            with open(anno_path, "r") as f:
+                self.anno = json.load(f)
+        else:
+            self.anno = None
 
     def __getitem__(self, idx):
         img_path = self.img_paths[idx]
