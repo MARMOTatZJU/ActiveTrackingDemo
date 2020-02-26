@@ -42,6 +42,11 @@ class FastRelationshipDetector(object):
 
         human_bboxes = np.array(human_bboxes).reshape(-1, 39)
         L = len(human_bboxes)  # detection number
+        if L <= 0:
+            human_id = -1
+            relation_type = ""
+            return human_id, relation_type
+
         human_keypoints = human_bboxes[:, 5:].reshape(L, 17, 2)
 
         # (L, 2)
@@ -61,7 +66,7 @@ class FastRelationshipDetector(object):
         # (L)
         max_ctrs = ctrs.max(axis=1)
         argmax_ctr_idx = max(range(len(max_ctrs)), 
-                          key=lambda idx: max_ctrs[idx])
+                             key=lambda idx: max_ctrs[idx])
 
         if max_ctrs[argmax_ctr_idx] > 0:
             human_id = human_ids[argmax_ctr_idx]
