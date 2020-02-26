@@ -9,10 +9,6 @@ from _utils.iou_tracker import IOUTracker
 from _utils.fast_relationship_detector import FastRelationshipDetector
 from _utils.bbox import calc_IoU
 
-# dataset = import_module("dataset", "/home/lan/Documents/xuyinda/Projects/video_analyst/debug/import_tracker.py")
-# dataset = import_module("dataset", "/home/lan/Documents/xuyinda/Projects/video_analyst/debug/import_dataset.py")
-# tracker = importlib.util.spec_from_file_location("tracker", "/home/lan/Documents/xuyinda/Projects/video_analyst/debug/import_tracker.py")
-# pose_detector = importlib.util.spec_from_file_location("pose_detector", "/home/lan/Documents/xuyinda/Projects/CenterNet/debug/import_pose_detector.py")
 
 # video_name = "frisbee"
 # video_name = "handball1"
@@ -21,19 +17,13 @@ from _utils.bbox import calc_IoU
 # video_names = ["handball1", "ball1", "basketball", "tiger"]
 
 import sys
-# sys.path.append("/home/lan/Documents/xuyinda/Projects/video_analyst/debug")
-# from import_dataset import dataset, vot_benchmark
-# from import_tracker import tracker, xywh2xyxy
 from import_videoanalyst import dataset, vot_benchmark
 from import_videoanalyst import tracker, xywh2xyxy
 
-# sys.path.append("/home/lan/Documents/xuyinda/Projects/CenterNet/debug")
-# from import_pose_detector import pose_detector, Debugger
 from import_centernet import pose_detector, Debugger
 
 imresize_ratio = 1
 video_writer_scale = 0.4
-# sys.path.append("/home/lan/Documents/xuyinda/Projects/CenterNet/src/lib/models/networks/DCNv2")
 
 # video_names = ["frisbee", "book", "ball1"]
 # video_names = ["glove"]
@@ -114,13 +104,22 @@ for video_name in video_names:
         cv2.rectangle(debugger.imgs["multi_pose"], target_bbox[:2], target_bbox[2:], color)
 
         # draw interaction status
-        txt = "holder_id %d"%holder_id
+        txt = "holder_id %03d"%holder_id
+        txt1 = relation_type
         font = cv2.FONT_HERSHEY_SIMPLEX
         cat_size = cv2.getTextSize(txt, font, 0.5, 2)[0]
+        cat_size1 = cv2.getTextSize(txt1, font, 0.5, 2)[0]
+        # draw for txt
         cv2.rectangle(debugger.imgs["multi_pose"],
-            (target_bbox[0], target_bbox[1] - cat_size[1] - 2),
-            (target_bbox[0] + cat_size[0], target_bbox[1] - 2), color, -1)
-        cv2.putText(debugger.imgs["multi_pose"], txt, (target_bbox[0], target_bbox[1] - 2), 
+            (target_bbox[0], target_bbox[1] - cat_size[1] - cat_size1[1] - 2 - 2),
+            (target_bbox[0] + cat_size[0], target_bbox[1] - cat_size1[1] - 2 - 2), color, -1)
+        cv2.putText(debugger.imgs["multi_pose"], txt, (target_bbox[0], target_bbox[1] - cat_size1[1] - 2 - 2), 
+                    font, 0.5, (0, 0, 0), thickness=1, lineType=cv2.LINE_AA)
+        # draw for txt1
+        cv2.rectangle(debugger.imgs["multi_pose"],
+            (target_bbox[0], target_bbox[1] - cat_size1[1] - 2),
+            (target_bbox[0] + cat_size1[0], target_bbox[1] - 2), color, -1)
+        cv2.putText(debugger.imgs["multi_pose"], txt1, (target_bbox[0], target_bbox[1] - 2), 
                     font, 0.5, (0, 0, 0), thickness=1, lineType=cv2.LINE_AA)
 
         # visualize

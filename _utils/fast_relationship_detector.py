@@ -44,7 +44,7 @@ class FastRelationshipDetector(object):
         L = len(human_bboxes)  # detection number
         if L <= 0:
             human_id = -1
-            relation_type = ""
+            relation_type = "no relationship"
             return human_id, relation_type
 
         human_keypoints = human_bboxes[:, 5:].reshape(L, 17, 2)
@@ -78,7 +78,7 @@ class FastRelationshipDetector(object):
                 relation_type = "possessing by foot"
         else:
             human_id = -1
-            relation_type = ""
+            relation_type = "no relationship"
 
         return human_id, relation_type
     
