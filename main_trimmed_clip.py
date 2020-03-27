@@ -31,7 +31,12 @@ video_writer_scale = 0.4
 # video_names = ["glove"]
 # video_names = ["frisbee"]
 video_dirs = [
-    "/data/Videos/ActiveTrackingDemo/frisbee/frisbee_Trim01",
+    # "/data/Videos/ActiveTrackingDemo/frisbee/frisbee_Trim01",
+    # "/data/Videos/ActiveTrackingDemo/frisbee/frisbee_Trim02",
+    # "/data/Videos/ActiveTrackingDemo/frisbee/frisbee_Trim03",
+    # "/data/Videos/ActiveTrackingDemo/frisbee/frisbee_Trim03_1",
+    # "/data/Videos/ActiveTrackingDemo/frisbee/frisbee_Trim03_2",
+    "/data/Videos/ActiveTrackingDemo/football/football_Trim01",
 ]
 for video_dir in video_dirs:
     video_name = osp.basename(video_dir)
@@ -59,6 +64,12 @@ for video_dir in video_dirs:
     rect = rect*imresize_ratio
 
     tracker.init(im, rect)
+    # dump template
+    im_template = tracker._state["z_crop"]
+    p_dump = "./tmp/template.jpg"
+    cv2.imwrite(p_dump, im_template)
+    print(p_dump)
+
     person_tracker = IOUTracker()
     rel_detector = FastRelationshipDetector()
     
@@ -118,13 +129,22 @@ for video_dir in video_dirs:
         cv2.rectangle(debugger.imgs["multi_pose"], target_bbox[:2], target_bbox[2:], color)
 
         # draw interaction status
-        txt = "holder_id %d"%holder_id
+        txt = "holder_id %03d"%holder_id
+        txt1 = relation_type
         font = cv2.FONT_HERSHEY_SIMPLEX
         cat_size = cv2.getTextSize(txt, font, 0.5, 2)[0]
+        cat_size1 = cv2.getTextSize(txt1, font, 0.5, 2)[0]
+        # draw for txt
         cv2.rectangle(debugger.imgs["multi_pose"],
-            (target_bbox[0], target_bbox[1] - cat_size[1] - 2),
-            (target_bbox[0] + cat_size[0], target_bbox[1] - 2), color, -1)
-        cv2.putText(debugger.imgs["multi_pose"], txt, (target_bbox[0], target_bbox[1] - 2), 
+            (target_bbox[0], target_bbox[1] - cat_size[1] - cat_size1[1] - 2 - 2),
+            (target_bbox[0] + cat_size[0], target_bbox[1] - cat_size1[1] - 2 - 2), color, -1)
+        cv2.putText(debugger.imgs["multi_pose"], txt, (target_bbox[0], target_bbox[1] - cat_size1[1] - 2 - 2), 
+                    font, 0.5, (0, 0, 0), thickness=1, lineType=cv2.LINE_AA)
+        # draw for txt1
+        cv2.rectangle(debugger.imgs["multi_pose"],
+            (target_bbox[0], target_bbox[1] - cat_size1[1] - 2),
+            (target_bbox[0] + cat_size1[0], target_bbox[1] - 2), color, -1)
+        cv2.putText(debugger.imgs["multi_pose"], txt1, (target_bbox[0], target_bbox[1] - 2), 
                     font, 0.5, (0, 0, 0), thickness=1, lineType=cv2.LINE_AA)
 
         # visualize

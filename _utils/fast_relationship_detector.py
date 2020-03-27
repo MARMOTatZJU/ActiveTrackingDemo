@@ -12,6 +12,8 @@ _RELATIONSHIP_CLASSES = ["possessing by hand", "possessing by foot",
 class FastRelationshipDetector(object):
     _MAX_CNT = 5
     _TARGET_BBOX_EXPANSION_RATIO = 1.5
+    _HAND_CTR_WEIGHT = 5
+    _FOOT_CTR_WEIGHT = 1
 
     def __init__(self,):
         self.relationship_histories = OrderedDict()
@@ -61,10 +63,18 @@ class FastRelationshipDetector(object):
         left_foot_ctr = calc_centerness(left_foot_pt, target_bbox)
         right_foot_ctr = calc_centerness(right_foot_pt, target_bbox)
 
+
+        hand_ctrs = np.stack([left_hand_ctr, right_hand_ctr], axis=1)
+        foot_ctrs = np.stack([left_foot_ctr, right_foot_ctr], axis=1)
+
         # (L, 4)
         ctrs = np.stack([left_hand_ctr, right_hand_ctr, left_foot_ctr, right_foot_ctr], axis=1)
         # (L)
-        max_ctrs = ctrs.max(axis=1)
+        # max_ctrs = ctrs.max(axis=1)
+        # Priviledge hand than foot
+        max_ctrs = self._HAND_CTR_WEIGHT * hand_ctrs.max(axis=1) + \
+                   self._FOOT_CTR_WEIGHT * foot_ctrs.max(axis=1)
+
         argmax_ctr_idx = max(range(len(max_ctrs)), 
                              key=lambda idx: max_ctrs[idx])
 

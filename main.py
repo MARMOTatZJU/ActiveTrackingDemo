@@ -46,6 +46,12 @@ for video_name in video_names:
     rect = rect*imresize_ratio
 
     tracker.init(im, rect)
+    # dump template
+    im_template = tracker._state["z_crop"]
+    p_dump = "./tmp/template.jpg"
+    cv2.imwrite(p_dump, im_template)
+    print(p_dump)
+
     person_tracker = IOUTracker()
     rel_detector = FastRelationshipDetector()
     
@@ -127,9 +133,9 @@ for video_name in video_names:
         video_writer.write(im_preview)
 
         # DEBUG
-        dump_freq = 10
+        dump_freq = 1
         if frame_idx % dump_freq == 0:
-            p_dump = "./tmp/%d.jpg"%frame_idx
+            p_dump = "./tmp/%05d.jpg"%frame_idx
             cv2.imwrite(p_dump, im_preview)
             print(p_dump)
         # DEBUG
